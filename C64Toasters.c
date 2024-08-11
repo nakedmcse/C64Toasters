@@ -7,7 +7,7 @@
 
 #define MAXTOASTERS 6
 #define SWIDTH 40
-#define SHEIGHT 20
+#define SHEIGHT 25
 
 void initToasters(toaster *far, toaster *near, toaster *toast) {
     for(int i = 0; i < MAXTOASTERS; i++) {
@@ -19,7 +19,12 @@ void initToasters(toaster *far, toaster *near, toaster *toast) {
         far[i].frameSpeed = 2;
         far[i].frame = 0;
         far[i].color = (rand() % 15) + 1;
-        //TODO: Char pointer for frames
+        far[i].frameHeight = 2;
+        far[i].frameWidth = 2;
+        far[i].maxFrame = 3;
+        far[i].frames[0] = farFrame0;
+        far[i].frames[1] = farFrame1;
+        far[i].frames[2] = farFrame2;
 
         near[i].x = rand() % SWIDTH;
         near[i].y = rand() % SHEIGHT;
@@ -29,7 +34,12 @@ void initToasters(toaster *far, toaster *near, toaster *toast) {
         near[i].frameSpeed = 1;
         near[i].frame = 0;
         near[i].color = (rand() % 15) + 1;
-        //TODO: Char pointer for frames
+        near[i].frameHeight = 4;
+        near[i].frameWidth = 3;
+        near[i].maxFrame = 3;
+        near[i].frames[0] = nearFrame0;
+        near[i].frames[1] = nearFrame1;
+        near[i].frames[2] = nearFrame2;
 
         toast[i].x = rand() % SWIDTH;
         toast[i].y = rand() % SHEIGHT;
@@ -39,7 +49,12 @@ void initToasters(toaster *far, toaster *near, toaster *toast) {
         toast[i].frameSpeed = 0;
         toast[i].frame = 0;
         toast[i].color = C64_COLOR_BROWN;
-        //TODO: Char pointer for frame
+        toast[i].frameHeight = 1;
+        toast[i].frameWidth = 2;
+        toast[i].maxFrame = 1;
+        toast[i].frames[0] = toastFrame0;
+        toast[i].frames[1] = NULL;
+        toast[i].frames[2] = NULL;
     }
 }
 
@@ -51,10 +66,16 @@ void initScreen() {
 
 void drawToasters(toaster *far, toaster *near, toaster *toast) {
     //TODO Implement drawing of toasters
+    // Loop far, then toast, then near
+    // Wipe out old x,y drawing
+    // Draw correct frame
 }
 
 void moveToasters(toaster *far, toaster *near, toaster *toast) {
     //TODO Implement movement and animation of toasters
+    // Loop all toasters
+    // Subtract speeed from x coord, or loop coord if -frameWidth
+    // Increment frame counter and mod it against maxframe
 }
 
 bool pollInput() {
