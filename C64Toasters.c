@@ -70,8 +70,12 @@ void drawFrame(toaster *target) {
     // Erase at oldx, oldy
     // Draw at x, y
     POKE_INK(target->x, target->y, target->color);
-    if(target->oldX >= 0) WRITE_CHAR(target->oldX, target->oldY, ' ');
-    if(target->x >= 0) WRITE_CHAR(target->x, target->y, 'O');
+    if(target->oldX >= 0) {
+        WRITE_CHAR(target->oldX, target->oldY, ' ');
+    }
+    if(target->x >= 0) {
+        WRITE_CHAR(target->x, target->y, 'O');
+    }
 }
 
 void drawToasters(toaster *farToaster, toaster *nearToaster, toaster *toast) {
@@ -94,19 +98,25 @@ void moveToasters(toaster *farToaster, toaster *nearToaster, toaster *toast) {
     for(i = 0; i < MAXTOASTERS; i++) {
         farToaster[i].oldX = farToaster[i].x;
         farToaster[i].x -= farToaster[i].speed;
-        if(farToaster[i].x < 0-farToaster[i].frameWidth) farToaster[i].x = SWIDTH;
+        if(farToaster[i].x < 0-farToaster[i].frameWidth) {
+            farToaster[i].x = SWIDTH;
+        }
         farToaster[i].frame++;
         farToaster[i].frame = farToaster[i].frame % farToaster[i].maxFrame;
 
         nearToaster[i].oldX = nearToaster[i].x;
         nearToaster[i].x -= nearToaster[i].speed;
-        if(nearToaster[i].x < 0-nearToaster[i].frameWidth) nearToaster[i].x = SWIDTH;
+        if(nearToaster[i].x < 0-nearToaster[i].frameWidth) {
+            nearToaster[i].x = SWIDTH;
+        }
         nearToaster[i].frame++;
         nearToaster[i].frame = nearToaster[i].frame % nearToaster[i].maxFrame;
 
         toast[i].oldX = toast[i].x;
         toast[i].x -= toast[i].speed;
-        if(toast[i].x < 0-toast[i].frameWidth) toast[i].x = SWIDTH;
+        if(toast[i].x < 0-toast[i].frameWidth) {
+            toast[i].x = SWIDTH;
+        }
         toast[i].frame++;
         toast[i].frame = toast[i].frame % toast[i].maxFrame;
     }
@@ -121,8 +131,12 @@ bool pollInput() {
     joy2 = GET_JOY2;
 
 
-    if((joy1 & C64_JOYSTICK_BUTTON) == 0) retval = false;
-    if((joy2 & C64_JOYSTICK_BUTTON) == 0) retval = false;
+    if((joy1 & C64_JOYSTICK_BUTTON) == 0) {
+        retval = false;
+    }
+    if((joy2 & C64_JOYSTICK_BUTTON) == 0) {
+        retval = false;
+    }
 
     switch(key) {
         case PKEY_NOKEY: break;
