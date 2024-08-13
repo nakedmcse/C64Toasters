@@ -9,42 +9,43 @@
 #define SWIDTH 40
 #define SHEIGHT 25
 
-void initToasters(toaster *far, toaster *near, toaster *toast) {
-    for(int i = 0; i < MAXTOASTERS; i++) {
-        far[i].x = rand() % SWIDTH;
-        far[i].y = rand() % SHEIGHT;
-        far[i].oldX = x;
-        far[i].oldY = y;
-        far[i].speed = 1;
-        far[i].frameSpeed = 2;
-        far[i].frame = 0;
-        far[i].color = (rand() % 15) + 1;
-        far[i].frameHeight = 2;
-        far[i].frameWidth = 2;
-        far[i].maxFrame = 3;
-        far[i].frames[0] = farFrame0;
-        far[i].frames[1] = farFrame1;
-        far[i].frames[2] = farFrame2;
+void initToasters(toaster *farToaster, toaster *nearToaster, toaster *toast) {
+    int i;
+    for(i = 0; i < MAXTOASTERS; i++) {
+        farToaster[i].x = rand() % SWIDTH;
+        farToaster[i].y = rand() % SHEIGHT;
+        farToaster[i].oldX = farToaster[i].x;
+        farToaster[i].oldY = farToaster[i].y;
+        farToaster[i].speed = 1;
+        farToaster[i].frameSpeed = 2;
+        farToaster[i].frame = 0;
+        farToaster[i].color = (rand() % 15) + 1;
+        farToaster[i].frameHeight = 2;
+        farToaster[i].frameWidth = 2;
+        farToaster[i].maxFrame = 3;
+        farToaster[i].frames[0] = farFrame0;
+        farToaster[i].frames[1] = farFrame1;
+        farToaster[i].frames[2] = farFrame2;
 
-        near[i].x = rand() % SWIDTH;
-        near[i].y = rand() % SHEIGHT;
-        near[i].oldX = x;
-        near[i].oldY = y;
-        near[i].speed = 2;
-        near[i].frameSpeed = 1;
-        near[i].frame = 0;
-        near[i].color = (rand() % 15) + 1;
-        near[i].frameHeight = 4;
-        near[i].frameWidth = 3;
-        near[i].maxFrame = 3;
-        near[i].frames[0] = nearFrame0;
-        near[i].frames[1] = nearFrame1;
-        near[i].frames[2] = nearFrame2;
+        nearToaster[i].x = rand() % SWIDTH;
+        nearToaster[i].y = rand() % SHEIGHT;
+        nearToaster[i].oldX = nearToaster[i].x;
+        nearToaster[i].oldY = nearToaster[i].y;
+        nearToaster[i].speed = 2;
+        nearToaster[i].frameSpeed = 1;
+        nearToaster[i].frame = 0;
+        nearToaster[i].color = (rand() % 15) + 1;
+        nearToaster[i].frameHeight = 4;
+        nearToaster[i].frameWidth = 3;
+        nearToaster[i].maxFrame = 3;
+        nearToaster[i].frames[0] = nearFrame0;
+        nearToaster[i].frames[1] = nearFrame1;
+        nearToaster[i].frames[2] = nearFrame2;
 
         toast[i].x = rand() % SWIDTH;
         toast[i].y = rand() % SHEIGHT;
-        toast[i].oldX = x;
-        toast[i].oldY = y;
+        toast[i].oldX = toast[i].x;
+        toast[i].oldY = toast[i].y;
         toast[i].speed = 1;
         toast[i].frameSpeed = 0;
         toast[i].frame = 0;
@@ -64,49 +65,69 @@ void initScreen() {
     GRAPHICS_OFF;
 }
 
-void drawToasters(toaster *far, toaster *near, toaster *toast) {
-    //TODO Implement drawing of toasters
-    // Loop far, then toast, then near
-    // Wipe out old x,y drawing
-    // Draw correct frame
+void drawFrame(toaster *target) {
+    //TODO Implement drawing single frame
+    // Erase at oldx, oldy
+    // Draw at x, y
+    POKE_INK(target->x, target->y, target->color);
+    if(target->oldX >= 0) WRITE_CHAR(target->oldX, target->oldY, ' ');
+    if(target->x >= 0) WRITE_CHAR(target->x, target->y, 'O');
 }
 
-void moveToasters(toaster *far, toaster *near, toaster *toast) {
-    //TODO Implement movement and animation of toasters
-    // Loop all toasters
-    // Subtract speeed from x coord, or loop coord if -frameWidth
-    // Increment frame counter and mod it against maxframe
+void drawToasters(toaster *farToaster, toaster *nearToaster, toaster *toast) {
+    int i;
+    for(i = 0; i < MAXTOASTERS; i++) {
+        drawFrame(&farToaster[i]);
+    }
+
+    for(i = 0; i < MAXTOASTERS; i++) {
+        drawFrame(&toast[i]);
+    }
+
+    for(i = 0; i < MAXTOASTERS; i++) {
+        drawFrame(&nearToaster[i]);
+    }
+}
+
+void moveToasters(toaster *farToaster, toaster *nearToaster, toaster *toast) {
+    int i;
+    for(i = 0; i < MAXTOASTERS; i++) {
+        farToaster[i].oldX = farToaster[i].x;
+        farToaster[i].x -= farToaster[i].speed;
+        if(farToaster[i].x < 0-farToaster[i].frameWidth) farToaster[i].x = SWIDTH;
+        farToaster[i].frame++;
+        farToaster[i].frame = farToaster[i].frame % farToaster[i].maxFrame;
+
+        nearToaster[i].oldX = nearToaster[i].x;
+        nearToaster[i].x -= nearToaster[i].speed;
+        if(nearToaster[i].x < 0-nearToaster[i].frameWidth) nearToaster[i].x = SWIDTH;
+        nearToaster[i].frame++;
+        nearToaster[i].frame = nearToaster[i].frame % nearToaster[i].maxFrame;
+
+        toast[i].oldX = toast[i].x;
+        toast[i].x -= toast[i].speed;
+        if(toast[i].x < 0-toast[i].frameWidth) toast[i].x = SWIDTH;
+        toast[i].frame++;
+        toast[i].frame = toast[i].frame % toast[i].maxFrame;
+    }
 }
 
 bool pollInput() {
     unsigned char key, joy1, joy2;
-    bool evalKeyboard = false, retval = true;
+    bool retval = true;
 
     key = GET_PKEY_VIEW;
     joy1 = GET_JOY1;
     joy2 = GET_JOY2;
 
-    // Evaluate joysticks first -- joy1 interferes with the keyboard!
-    if((joy1 & C64_JOYSTICK_NONE) == C64_JOYSTICK_NONE) {
-        if((joy2 & C64_JOYSTICK_NONE) == C64_JOYSTICK_NONE) evalKeyboard = true;
-    }
-    else {
-        if((joy1 & C64_JOYSTICK_BUTTON) == 0) retval = false;
-    }
 
-    if((joy2 & C64_JOYSTICK_NONE) == C64_JOYSTICK_NONE) {
-        if((joy1 & C64_JOYSTICK_NONE) == C64_JOYSTICK_NONE) evalKeyboard = true;
-    }
-    else {
-        if((joy2 & C64_JOYSTICK_BUTTON) == 0) retval = false;
-    }
+    if((joy1 & C64_JOYSTICK_BUTTON) == 0) retval = false;
+    if((joy2 & C64_JOYSTICK_BUTTON) == 0) retval = false;
 
-    if(evalKeyboard) {
-        switch(key) {
+    switch(key) {
         case PKEY_NOKEY: break;
         case PKEY_Q: retval = false; break;
         default: break;
-        }
     }
 
     CLRKEY;
@@ -127,5 +148,7 @@ int main(void) {
         isRunning = pollInput();
     }
 
+    GRAPHICS_ON;
+    CLRSCR;
     return 0;
 }
