@@ -5,7 +5,7 @@
 #include "c64.h"
 #include "types.h"
 
-#define MAXTOASTERS 6
+#define MAXTOASTERS 3
 #define SWIDTH 40
 #define SHEIGHT 25
 
@@ -35,7 +35,7 @@ void initToasters(toaster *farToaster, toaster *nearToaster, toaster *toast) {
         nearToaster[i].frameSpeed = 1;
         nearToaster[i].frame = 0;
         nearToaster[i].color = (rand() % 15) + 1;
-        nearToaster[i].frameHeight = 4;
+        nearToaster[i].frameHeight = 3;
         nearToaster[i].frameWidth = 3;
         nearToaster[i].maxFrame = 3;
         nearToaster[i].frames[0] = nearFrame0;
@@ -66,15 +66,21 @@ void initScreen() {
 }
 
 void drawFrame(toaster *target) {
-    //TODO Implement drawing single frame
-    // Erase at oldx, oldy
-    // Draw at x, y
-    POKE_INK(target->x, target->y, target->color);
-    if(target->oldX >= 0) {
-        WRITE_CHAR(target->oldX, target->oldY, ' ');
-    }
-    if(target->x >= 0) {
-        WRITE_CHAR(target->x, target->y, 'O');
+    int i,j,edge;
+    edge = target->oldX+target->frameWidth-target->speed;
+    for(j=0; j<target->frameHeight; j++) {
+        for(i=0; i<target->frameWidth; i++) {
+            if((target->x+i>=0 && target->x+i<=SWIDTH) && (target->y+j>=0 && target->y+j<=SHEIGHT)) {
+                POKE_INK(target->x+i, target->y+j, target->color);
+                WRITE_CHAR(target->x+i, target->y+j, target->frames[0][(j*target->frameWidth)+i]);
+            }
+        }
+        if((edge>=0 && edge<=SWIDTH) && (target->oldY+j>=0 && target->oldY+j<=SHEIGHT)) {
+            WRITE_CHAR(edge, target->oldY+j, ' ');
+            if(target->speed == 2) {
+                WRITE_CHAR(edge+1, target->oldY+j, ' ');
+            }
+        }
     }
 }
 

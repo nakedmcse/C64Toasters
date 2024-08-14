@@ -8,16 +8,16 @@ typedef struct toaster {
 } toaster;
 
 // Toast frames
-static char toastFrame0[6] = {102, 102, '\n', 102, 102, 0};
+static char toastFrame0[4] = {102, 102, 102, 102};
 
 // Far Toaster frames
-static char farFrame0[6];
-static char farFrame1[6];
-static char farFrame2[6];
+static char farFrame0[4] = {102, 102, 102, 102};;
+static char farFrame1[4];
+static char farFrame2[4];
 
 // Near Toaster frames
-static char nearFrame0[6];
-static char nearFrame1[6];
-static char nearFrame2[6];
+static char nearFrame0[9] = {102, 102, 102, 102, 102, 102, 102, 102, 102};;
+static char nearFrame1[9];
+static char nearFrame2[9];
 
 #endif //TYPES_H
