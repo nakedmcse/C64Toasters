@@ -72,7 +72,8 @@ void drawFrame(toaster *target) {
     frame = target->maxFrame > 1 ? target->frame : 0;
     for(j=0; j<target->frameHeight; j++) {
         for(i=0; i<target->frameWidth; i++) {
-            if((target->x+i>=0 && target->x+i<=SWIDTH) && (target->y+j>=0 && target->y+j<=SHEIGHT)) {
+            if((target->x+i>=0 && target->x+i<=SWIDTH) &&
+                (target->y+j>=0 && target->y+j<=SHEIGHT)) {
                 POKE_INK(target->x+i, target->y+j, target->color);
                 WRITE_CHAR(target->x+i, target->y+j, target->frames[frame][(j*target->frameWidth)+i]);
             }
@@ -89,9 +90,13 @@ void drawFrame(toaster *target) {
 void drawToasters(toaster *farToaster, toaster *nearToaster, toaster *toast) {
     int i;
     for(i = 0; i < MAXTOASTERS; i++) {
-        drawFrame(&farToaster[i]);
-        drawFrame(&toast[i]);
         drawFrame(&nearToaster[i]);
+    }
+    for(i = 0; i < MAXTOASTERS; i++) {
+        drawFrame(&toast[i]);
+    }
+    for(i = 0; i < MAXTOASTERS; i++) {
+        drawFrame(&farToaster[i]);
     }
 }
 

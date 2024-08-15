@@ -87,6 +87,9 @@ POKE(53272U,(PEEK(53272U) & 240) | 12);
 #define WRITE_CHAR(x,y,ch) \
 POKE(BASE_SCREEN_ADDRESS+(40*(y))+x, ch);
 
+#define READ_CHAR(x,y) \
+PEEK(BASE_SCREEN_ADDRESS+(40*(y))+x)
+
 #define POKE_INK(x,y,col) \
 POKE(BASE_COLOR_ADDRESS+(40*(y))+x, col);
 
