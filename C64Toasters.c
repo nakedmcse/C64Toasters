@@ -54,7 +54,6 @@ void initScreen() {
 }
 
 bool checkLayerCollision(int x, int y, toaster *layer) {
-    bool retval = false;
     int i;
     if(layer == NULL) {
         return false;
@@ -62,10 +61,10 @@ bool checkLayerCollision(int x, int y, toaster *layer) {
     for(i = 0; i < MAXTOASTERS; i++) {
         if(INRANGE(x, layer[i].x, layer[i].x+layer[i].frameWidth)
             && INRANGE(y, layer[i].y, layer[i].y+layer[i].frameHeight)) {
-            retval = true;
+            return true;
         }
     }
-    return retval;
+    return false;
 }
 
 void drawFrame(toaster *target, toaster *prevLayer) {
