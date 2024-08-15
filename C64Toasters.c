@@ -6,11 +6,12 @@
 #include "types.h"
 
 #define MAXTOASTERS 3
-#define SWIDTH 40
+#define SWIDTH 39
 #define SHEIGHT 25
 
 void initToasters(toaster *farToaster, toaster *nearToaster, toaster *toast) {
     int i;
+    _randomize();
     for(i = 0; i < MAXTOASTERS; i++) {
         farToaster[i].x = rand() % SWIDTH;
         farToaster[i].y = rand() % SHEIGHT;
@@ -62,17 +63,18 @@ void initToasters(toaster *farToaster, toaster *nearToaster, toaster *toast) {
 void initScreen() {
     CLRSCR;
     SET_COLORS(C64_COLOR_BLACK,C64_COLOR_BLACK,C64_COLOR_GREEN);
-    GRAPHICS_OFF;
+    GRAPHICS_ON;
 }
 
 void drawFrame(toaster *target) {
-    int i,j,edge;
+    int i,j,edge,frame;
     edge = target->oldX+target->frameWidth-target->speed;
+    frame = target->maxFrame > 1 ? target->frame : 0;
     for(j=0; j<target->frameHeight; j++) {
         for(i=0; i<target->frameWidth; i++) {
             if((target->x+i>=0 && target->x+i<=SWIDTH) && (target->y+j>=0 && target->y+j<=SHEIGHT)) {
                 POKE_INK(target->x+i, target->y+j, target->color);
-                WRITE_CHAR(target->x+i, target->y+j, target->frames[0][(j*target->frameWidth)+i]);
+                WRITE_CHAR(target->x+i, target->y+j, target->frames[frame][(j*target->frameWidth)+i]);
             }
         }
         if((edge>=0 && edge<=SWIDTH) && (target->oldY+j>=0 && target->oldY+j<=SHEIGHT)) {
@@ -88,13 +90,7 @@ void drawToasters(toaster *farToaster, toaster *nearToaster, toaster *toast) {
     int i;
     for(i = 0; i < MAXTOASTERS; i++) {
         drawFrame(&farToaster[i]);
-    }
-
-    for(i = 0; i < MAXTOASTERS; i++) {
         drawFrame(&toast[i]);
-    }
-
-    for(i = 0; i < MAXTOASTERS; i++) {
         drawFrame(&nearToaster[i]);
     }
 }
@@ -106,6 +102,8 @@ void moveToasters(toaster *farToaster, toaster *nearToaster, toaster *toast) {
         farToaster[i].x -= farToaster[i].speed;
         if(farToaster[i].x < 0-farToaster[i].frameWidth) {
             farToaster[i].x = SWIDTH;
+            //farToaster[i].y = rand() % SHEIGHT;
+            farToaster[i].color = (rand() % 15) + 1;
         }
         farToaster[i].frame++;
         farToaster[i].frame = farToaster[i].frame % farToaster[i].maxFrame;
@@ -114,6 +112,8 @@ void moveToasters(toaster *farToaster, toaster *nearToaster, toaster *toast) {
         nearToaster[i].x -= nearToaster[i].speed;
         if(nearToaster[i].x < 0-nearToaster[i].frameWidth) {
             nearToaster[i].x = SWIDTH;
+            //nearToaster[i].y = rand() % SHEIGHT;
+            nearToaster[i].color = (rand() % 15) + 1;
         }
         nearToaster[i].frame++;
         nearToaster[i].frame = nearToaster[i].frame % nearToaster[i].maxFrame;
@@ -122,9 +122,8 @@ void moveToasters(toaster *farToaster, toaster *nearToaster, toaster *toast) {
         toast[i].x -= toast[i].speed;
         if(toast[i].x < 0-toast[i].frameWidth) {
             toast[i].x = SWIDTH;
+            //toast[i].y = rand() % SHEIGHT;
         }
-        toast[i].frame++;
-        toast[i].frame = toast[i].frame % toast[i].maxFrame;
     }
 }
 
@@ -168,7 +167,6 @@ int main(void) {
         isRunning = pollInput();
     }
 
-    GRAPHICS_ON;
     CLRSCR;
     return 0;
 }
