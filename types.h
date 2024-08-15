@@ -7,9 +7,6 @@ typedef struct toaster {
     char *frames[3];
 } toaster;
 
-// Toast frames
-static char toastFrame0[4] = {102, 102, 102, 102};
-
 // Far Toaster frames
 static char farFrame0[4] = {112, 110, 109, 125};
 static char farFrame1[4] = {112, 47, 109, 125};

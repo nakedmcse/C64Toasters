@@ -5,13 +5,13 @@
 #include "c64.h"
 #include "types.h"
 
-#define MAXTOASTERS 3
+#define MAXTOASTERS 4
 #define SWIDTH 39
 #define SHEIGHT 24
 #define INRANGE(x, low, high) \
 x>=low && x<=high
 
-void initToasters(toaster *farToaster, toaster *nearToaster, toaster *toast) {
+void initToasters(toaster *farToaster, toaster *nearToaster) {
     int i;
     _randomize();
     for(i = 0; i < MAXTOASTERS; i++) {
@@ -44,21 +44,6 @@ void initToasters(toaster *farToaster, toaster *nearToaster, toaster *toast) {
         nearToaster[i].frames[0] = nearFrame0;
         nearToaster[i].frames[1] = nearFrame1;
         nearToaster[i].frames[2] = nearFrame2;
-
-        toast[i].x = rand() % SWIDTH;
-        toast[i].y = (rand() % (SHEIGHT - 1))+1;
-        toast[i].oldX = toast[i].x;
-        toast[i].oldY = toast[i].y;
-        toast[i].speed = 1;
-        toast[i].frameSpeed = 0;
-        toast[i].frame = 0;
-        toast[i].color = C64_COLOR_BROWN;
-        toast[i].frameHeight = 1;
-        toast[i].frameWidth = 2;
-        toast[i].maxFrame = 1;
-        toast[i].frames[0] = toastFrame0;
-        toast[i].frames[1] = NULL;
-        toast[i].frames[2] = NULL;
     }
 }
 
@@ -68,12 +53,30 @@ void initScreen() {
     GRAPHICS_ON;
 }
 
-void drawFrame(toaster *target) {
+bool checkLayerCollision(int x, int y, toaster *layer) {
+    bool retval = false;
+    int i;
+    if(layer == NULL) {
+        return false;
+    }
+    for(i = 0; i < MAXTOASTERS; i++) {
+        if(INRANGE(x, layer[i].x, layer[i].x+layer[i].frameWidth)
+            && INRANGE(y, layer[i].y, layer[i].y+layer[i].frameHeight)) {
+            retval = true;
+        }
+    }
+    return retval;
+}
+
+void drawFrame(toaster *target, toaster *prevLayer) {
     int i,j,edge,frame;
     edge = target->oldX+target->frameWidth-target->speed;
     frame = target->maxFrame > 1 ? target->frame : 0;
     for(j=0; j<target->frameHeight; j++) {
         for(i=0; i<target->frameWidth; i++) {
+            if(checkLayerCollision(target->x+i, target->y+j, prevLayer)) {
+                continue;
+            }
             if((INRANGE(target->x+i, 0, SWIDTH)) &&
                 (INRANGE(target->y+j, 0, SHEIGHT))) {
                 POKE_INK(target->x+i, target->y+j, target->color);
@@ -89,20 +92,17 @@ void drawFrame(toaster *target) {
     }
 }
 
-void drawToasters(toaster *farToaster, toaster *nearToaster, toaster *toast) {
+void drawToasters(toaster *farToaster, toaster *nearToaster) {
     int i;
     for(i = 0; i < MAXTOASTERS; i++) {
-        drawFrame(&nearToaster[i]);
+        drawFrame(&nearToaster[i], NULL);
     }
     for(i = 0; i < MAXTOASTERS; i++) {
-        drawFrame(&toast[i]);
-    }
-    for(i = 0; i < MAXTOASTERS; i++) {
-        drawFrame(&farToaster[i]);
+        drawFrame(&farToaster[i], &nearToaster[0]);
     }
 }
 
-void moveToasters(toaster *farToaster, toaster *nearToaster, toaster *toast) {
+void moveToasters(toaster *farToaster, toaster *nearToaster) {
     int i;
     for(i = 0; i < MAXTOASTERS; i++) {
         farToaster[i].oldX = farToaster[i].x;
@@ -126,14 +126,6 @@ void moveToasters(toaster *farToaster, toaster *nearToaster, toaster *toast) {
         }
         nearToaster[i].frame++;
         nearToaster[i].frame = nearToaster[i].frame % nearToaster[i].maxFrame;
-
-        toast[i].oldX = toast[i].x;
-        toast[i].oldY = toast[i].y;
-        toast[i].x -= toast[i].speed;
-        if(toast[i].x < 0-toast[i].frameWidth) {
-            toast[i].x = SWIDTH;
-            toast[i].y = (rand() % (SHEIGHT - toast[i].frameHeight))+1;
-        }
     }
 }
 
@@ -164,16 +156,16 @@ bool pollInput() {
 }
 
 int main(void) {
-    toaster farToasters[MAXTOASTERS], nearToasters[MAXTOASTERS], toasts[MAXTOASTERS];
+    toaster farToasters[MAXTOASTERS], nearToasters[MAXTOASTERS];
     bool isRunning = true;
 
     initScreen();
-    initToasters(&farToasters[0], &nearToasters[0], &toasts[0]);
+    initToasters(&farToasters[0], &nearToasters[0]);
 
     // Main Loop
     while(isRunning) {
-        drawToasters(&farToasters[0], &nearToasters[0], &toasts[0]);
-        moveToasters(&farToasters[0], &nearToasters[0], &toasts[0]);
+        drawToasters(&farToasters[0], &nearToasters[0]);
+        moveToasters(&farToasters[0], &nearToasters[0]);
         isRunning = pollInput();
     }
 
