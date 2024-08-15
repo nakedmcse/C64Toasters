@@ -7,14 +7,14 @@
 
 #define MAXTOASTERS 3
 #define SWIDTH 39
-#define SHEIGHT 25
+#define SHEIGHT 24
 
 void initToasters(toaster *farToaster, toaster *nearToaster, toaster *toast) {
     int i;
     _randomize();
     for(i = 0; i < MAXTOASTERS; i++) {
         farToaster[i].x = rand() % SWIDTH;
-        farToaster[i].y = rand() % SHEIGHT;
+        farToaster[i].y = (rand() % (SHEIGHT - 2))+1;
         farToaster[i].oldX = farToaster[i].x;
         farToaster[i].oldY = farToaster[i].y;
         farToaster[i].speed = 1;
@@ -29,7 +29,7 @@ void initToasters(toaster *farToaster, toaster *nearToaster, toaster *toast) {
         farToaster[i].frames[2] = farFrame2;
 
         nearToaster[i].x = rand() % SWIDTH;
-        nearToaster[i].y = rand() % SHEIGHT;
+        nearToaster[i].y = (rand() % (SHEIGHT - 3))+1;
         nearToaster[i].oldX = nearToaster[i].x;
         nearToaster[i].oldY = nearToaster[i].y;
         nearToaster[i].speed = 2;
@@ -44,7 +44,7 @@ void initToasters(toaster *farToaster, toaster *nearToaster, toaster *toast) {
         nearToaster[i].frames[2] = nearFrame2;
 
         toast[i].x = rand() % SWIDTH;
-        toast[i].y = rand() % SHEIGHT;
+        toast[i].y = (rand() % (SHEIGHT - 1))+1;
         toast[i].oldX = toast[i].x;
         toast[i].oldY = toast[i].y;
         toast[i].speed = 1;
@@ -99,30 +99,33 @@ void moveToasters(toaster *farToaster, toaster *nearToaster, toaster *toast) {
     int i;
     for(i = 0; i < MAXTOASTERS; i++) {
         farToaster[i].oldX = farToaster[i].x;
+        farToaster[i].oldY = farToaster[i].y;
         farToaster[i].x -= farToaster[i].speed;
         if(farToaster[i].x < 0-farToaster[i].frameWidth) {
             farToaster[i].x = SWIDTH;
-            //farToaster[i].y = rand() % SHEIGHT;
+            farToaster[i].y = (rand() % (SHEIGHT - farToaster[i].frameHeight))+1;
             farToaster[i].color = (rand() % 15) + 1;
         }
         farToaster[i].frame++;
         farToaster[i].frame = farToaster[i].frame % farToaster[i].maxFrame;
 
         nearToaster[i].oldX = nearToaster[i].x;
+        nearToaster[i].oldY = nearToaster[i].y;
         nearToaster[i].x -= nearToaster[i].speed;
         if(nearToaster[i].x < 0-nearToaster[i].frameWidth) {
             nearToaster[i].x = SWIDTH;
-            //nearToaster[i].y = rand() % SHEIGHT;
+            nearToaster[i].y = (rand() % (SHEIGHT - nearToaster[i].frameHeight))+1;
             nearToaster[i].color = (rand() % 15) + 1;
         }
         nearToaster[i].frame++;
         nearToaster[i].frame = nearToaster[i].frame % nearToaster[i].maxFrame;
 
         toast[i].oldX = toast[i].x;
+        toast[i].oldY = toast[i].y;
         toast[i].x -= toast[i].speed;
         if(toast[i].x < 0-toast[i].frameWidth) {
             toast[i].x = SWIDTH;
-            //toast[i].y = rand() % SHEIGHT;
+            toast[i].y = (rand() % (SHEIGHT - toast[i].frameHeight))+1;
         }
     }
 }
