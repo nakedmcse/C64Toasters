@@ -8,6 +8,8 @@
 #define MAXTOASTERS 3
 #define SWIDTH 39
 #define SHEIGHT 24
+#define INRANGE(x, low, high) \
+x>=low && x<=high
 
 void initToasters(toaster *farToaster, toaster *nearToaster, toaster *toast) {
     int i;
@@ -72,13 +74,13 @@ void drawFrame(toaster *target) {
     frame = target->maxFrame > 1 ? target->frame : 0;
     for(j=0; j<target->frameHeight; j++) {
         for(i=0; i<target->frameWidth; i++) {
-            if((target->x+i>=0 && target->x+i<=SWIDTH) &&
-                (target->y+j>=0 && target->y+j<=SHEIGHT)) {
+            if((INRANGE(target->x+i, 0, SWIDTH)) &&
+                (INRANGE(target->y+j, 0, SHEIGHT))) {
                 POKE_INK(target->x+i, target->y+j, target->color);
                 WRITE_CHAR(target->x+i, target->y+j, target->frames[frame][(j*target->frameWidth)+i]);
             }
         }
-        if((edge>=0 && edge<=SWIDTH) && (target->oldY+j>=0 && target->oldY+j<=SHEIGHT)) {
+        if((INRANGE(edge, 0, SWIDTH)) && (INRANGE(target->oldY+j, 0, SHEIGHT))) {
             WRITE_CHAR(edge, target->oldY+j, ' ');
             if(target->speed == 2) {
                 WRITE_CHAR(edge+1, target->oldY+j, ' ');
