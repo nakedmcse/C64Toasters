@@ -130,7 +130,6 @@ void moveToasters(toaster *farToaster, toaster *nearToaster) {
 
 bool pollInput() {
     unsigned char key, joy1, joy2;
-    bool retval = true;
 
     key = GET_PKEY_VIEW;
     joy1 = GET_JOY1;
@@ -138,20 +137,20 @@ bool pollInput() {
 
 
     if((joy1 & C64_JOYSTICK_BUTTON) == 0) {
-        retval = false;
+        return false;
     }
     if((joy2 & C64_JOYSTICK_BUTTON) == 0) {
-        retval = false;
+        return false;
     }
 
     switch(key) {
         case PKEY_NOKEY: break;
-        case PKEY_Q: retval = false; break;
+        case PKEY_Q: return false; break;
         default: break;
     }
 
     CLRKEY;
-    return retval;
+    return true;
 }
 
 int main(void) {
