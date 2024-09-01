@@ -48,6 +48,7 @@ __asm__("sta $c6");
 
 // Screen Macros
 #define BASE_SCREEN_ADDRESS 0x0400
+#define BASE_ALTSCR_ADDRESS 0x0800
 #define BASE_COLOR_ADDRESS  0xD800
 #define BASE_CHAR_ADDRESS   0x3000
 
@@ -69,6 +70,12 @@ POKE(0xD018,21);
 #define GRAPHICS_OFF \
 POKE(0xD018,23);
 
+#define SCREEN_LOC_STD \
+POKE(0xD018,21);
+
+#define SCREEN_LOC_ALT \
+POKE(0xD018,37);
+
 #define VIC_INT_OFF \
 POKE(56334U,(PEEK(56334U) & 254));
 
@@ -84,8 +91,8 @@ POKE(1U,(PEEK(1U) | 4));
 #define SET_CHARRAM \
 POKE(53272U,(PEEK(53272U) & 240) | 12);
 
-#define WRITE_CHAR(x,y,ch) \
-POKE(BASE_SCREEN_ADDRESS+(40*(y))+x, ch);
+#define WRITE_CHAR(base,x,y,ch) \
+POKE(base+(40*(y))+x, ch);
 
 #define READ_CHAR(x,y) \
 PEEK(BASE_SCREEN_ADDRESS+(40*(y))+x)

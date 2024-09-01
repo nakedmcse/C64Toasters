@@ -79,13 +79,13 @@ void drawFrame(toaster *target, toaster *prevLayer) {
             if((INRANGE(target->x+i, 0, SWIDTH)) &&
                 (INRANGE(target->y+j, 0, SHEIGHT))) {
                 POKE_INK(target->x+i, target->y+j, target->color);
-                WRITE_CHAR(target->x+i, target->y+j, target->frames[frame][(j*target->frameWidth)+i]);
+                WRITE_CHAR(BASE_SCREEN_ADDRESS, target->x+i, target->y+j, target->frames[frame][(j*target->frameWidth)+i]);
             }
         }
         if((INRANGE(edge, 0, SWIDTH)) && (INRANGE(target->oldY+j, 0, SHEIGHT))) {
-            WRITE_CHAR(edge, target->oldY+j, ' ');
+            WRITE_CHAR(BASE_SCREEN_ADDRESS, edge, target->oldY+j, ' ');
             if(target->speed == 2) {
-                WRITE_CHAR(edge+1, target->oldY+j, ' ');
+                WRITE_CHAR(BASE_SCREEN_ADDRESS, edge+1, target->oldY+j, ' ');
             }
         }
     }
